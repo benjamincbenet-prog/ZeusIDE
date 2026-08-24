@@ -21,6 +21,17 @@ val hasValidSigningProps = keystorePropsFile.exists() && listOf(
     "storeFile", "storePassword", "keyAlias", "keyPassword"
 ).all { key -> keystoreProps[key] != null }
 
+val localPropsFile = rootProject.file("local.properties")
+val localProps = Properties()
+if (localPropsFile.exists()) {
+    FileInputStream(localPropsFile).use { localProps.load(it) }
+}
+
+val sandboxServerUrl: String =
+    (localProps["sandboxServerUrl"] as? String)
+        ?: System.getenv("SANDBOX_SERVER_URL")
+        ?: ""
+
 
 android {
     namespace = "com.bcbprog.zeuside"  

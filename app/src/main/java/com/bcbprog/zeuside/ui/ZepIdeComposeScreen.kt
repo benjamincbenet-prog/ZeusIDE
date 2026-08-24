@@ -61,11 +61,12 @@ fun ZeppIdeComposeScreen(
         )
     }
 
-    var activeFilePath by remember { mutableStateOf("page/index.js") }
+    val activeFilePathState = remember { mutableStateOf("page/index.js") }
+    var activeFilePath by activeFilePathState
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     var isTerminalExpanded by remember { mutableStateOf(false) }
 
-    val webAppInterface = remember { WebAppInterface(getActiveFilePath = { activeFilePath }, fileMap = fileMap) }
+    val webAppInterface = remember { WebAppInterface(getActiveFilePath = { activeFilePathState.value }, fileMap = fileMap) }
 
     // Auto-expand terminal when new logs arrive
     LaunchedEffect(buildLogs) {
