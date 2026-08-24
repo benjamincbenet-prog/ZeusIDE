@@ -1,5 +1,6 @@
 package com.bcbprog.zeuside.ui
 
+import android.annotation.SuppressLint
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -43,6 +44,7 @@ private class WebAppInterface(
     }
 }
 
+@SuppressLint("JavascriptInterface")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ZeppIdeComposeScreen(
