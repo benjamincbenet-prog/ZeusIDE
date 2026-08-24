@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +32,16 @@ data class ProjectFile(
     val language: String,
     var content: String
 )
+
+private class WebAppInterface(
+    private val getActiveFilePath: () -> String,
+    private val fileMap: SnapshotStateMap<String, ProjectFile>
+) {
+    @JavascriptInterface
+    fun onCodeChanged(newContent: String) {
+        fileMap[getActiveFilePath()]?.let { file -> file.content = newContent }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,16 +65,11 @@ fun ZeppIdeComposeScreen(
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     var isTerminalExpanded by remember { mutableStateOf(false) }
 
+    val webAppInterface = remember { WebAppInterface(getActiveFilePath = { activeFilePath }, fileMap = fileMap) }
+
     // Auto-expand terminal when new logs arrive
     LaunchedEffect(buildLogs) {
         if (buildLogs.isNotBlank()) isTerminalExpanded = true
-    }
-
-    class WebAppInterface {
-        @JavascriptInterface
-        fun onCodeChanged(newContent: String) {
-            fileMap[activeFilePath]?.let { file -> file.content = newContent }
-        }
     }
 
     Scaffold(
@@ -160,7 +166,7 @@ fun ZeppIdeComposeScreen(
                                         mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                                     }
                                     
-                                    addJavascriptInterface(WebAppInterface(), "AndroidBridge")
+                                    addJavascriptInterface(webAppInterface, "AndroidBridge")
                                     
                                     webViewClient = object : WebViewClient() {
                                         override fun onPageFinished(view: WebView?, url: String?) {

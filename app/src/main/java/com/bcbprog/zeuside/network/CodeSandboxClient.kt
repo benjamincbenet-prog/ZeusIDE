@@ -21,7 +21,7 @@ data class BuildResponse(
     val error: String? = null
 )
 
-class CodeSandboxClient(private val serverUrl: String) {
+class CodeSandboxClient(private val serverUrl: String) : Closeable {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -38,5 +38,9 @@ class CodeSandboxClient(private val serverUrl: String) {
         } catch (e: Exception) {
             BuildResponse(success = false, error = e.localizedMessage ?: "Network error")
         }
+    }
+
+    override fun close() {
+        client.close()
     }
 }

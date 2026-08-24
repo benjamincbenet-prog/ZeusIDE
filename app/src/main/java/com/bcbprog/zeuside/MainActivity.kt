@@ -12,7 +12,7 @@ import com.bcbprog.zeuside.ui.ZeppIdeComposeScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    private val sandboxClient = CodeSandboxClient("https://YOUR-SANDBOX-ID-3000.csb.app")
+    private val sandboxClient = CodeSandboxClient(BuildConfig.SANDBOX_SERVER_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                             
                             if (response.success && !response.artifacts.isNullOrEmpty()) {
                                 // Direct public URL to the generated .zab file on CodeSandbox
-                                qrUrl = "https://YOUR-SANDBOX-ID-3000.csb.app/zepp_project/dist/${response.artifacts.first()}"
+                                qrUrl = "${BuildConfig.SANDBOX_SERVER_URL}/zepp_project/dist/${response.artifacts.first()}"
                                 buildLogs += "\nQR Code generated successfully."
                             } else {
                                 buildLogs += "\nFailed to generate preview package."
@@ -58,5 +58,10 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sandboxClient.close()
     }
 }

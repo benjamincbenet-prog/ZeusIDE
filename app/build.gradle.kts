@@ -14,29 +14,17 @@ val keystorePropsFile = rootProject.file("release.properties")
 val keystoreProps = Properties()
 
 if (keystorePropsFile.exists()) {
-    keystoreProps.load(FileInputStream(keystorePropsFile))
+    FileInputStream(keystorePropsFile).use { keystoreProps.load(it) }
 }
 
-val hasValidSigningProps = keystorePropsFile.exists().also { exists ->
-    if (exists) {
-        FileInputStream(keystorePropsFile).use { keystoreProps.load(it) }
-    }
-}.let {
-    listOf("storeFile", "storePassword", 
-            "keyAlias", "keyPassword").all { key ->
-        keystoreProps[key] != null
-    }
-}
+val hasValidSigningProps = keystorePropsFile.exists() && listOf(
+    "storeFile", "storePassword", "keyAlias", "keyPassword"
+).all { key -> keystoreProps[key] != null }
 
 
 android {
     namespace = "com.bcbprog.zeuside"  
     compileSdk = 36    
-    // disable linter
-    lint {
-        checkReleaseBuilds = false
-    }
-        
     signingConfigs {
         if (hasValidSigningProps) {
             create("release") {
@@ -54,6 +42,8 @@ android {
         targetSdk = 36  
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "SANDBOX_SERVER_URL", "\"https://YOUR-SANDBOX-ID-3000.csb.app\"")
         
         vectorDrawables { 
             useSupportLibrary = true
@@ -76,7 +66,7 @@ android {
     }
 
     buildFeatures {
-        
+        buildConfig = true
         compose = true
     }
     composeOptions {
