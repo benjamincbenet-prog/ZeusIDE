@@ -1,0 +1,21 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/ZeusIDE/app/src/assets/monaco_editor.html",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 1528,
+          "line": 48
+        },
+        "start": {
+          "column": 0,
+          "index": 1528,
+          "line": 48
+        }
+      }
+    }
+  ],
+  "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/ZeusIDE",
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/ZeusIDE/app/src/assets/monaco_editor.html"
+}

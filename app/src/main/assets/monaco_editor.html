@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+  <style>
+    html, body, #container { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #1e1e1e; }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script>
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } });
+    var editor;
+
+    require(['vs/editor/editor.main'], function () {
+      // Inject Zepp OS Ambient Typings
+      monaco.languages.typescript.javascriptDefaults.addExtraLib(`
+        declare module '@zeppos/device-api' {
+          export function getDeviceInfo(): { width: number; height: number; screenShape: number };
+        }
+      `, 'file:///node_modules/@types/zeppos__device-api/index.d.ts');
+
+      editor = monaco.editor.create(document.getElementById('container'), {
+        value: '// Loading...',
+        language: 'javascript',
+        theme: 'vs-dark',
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: { enabled: false }
+      });
+
+      editor.onDidChangeModelContent(function() {
+        if (window.AndroidBridge) {
+          window.AndroidBridge.onCodeChanged(editor.getValue());
+        }
+      });
+    });
+
+    function setEditorContent(content, language) {
+      if (editor) {
+        var model = monaco.editor.createModel(content, language);
+        editor.setModel(model);
+      }
+    }
+  </script>
+</body>
+</html>
