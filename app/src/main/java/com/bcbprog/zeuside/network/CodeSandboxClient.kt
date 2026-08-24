@@ -9,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.io.Closeable
 
 @Serializable
 data class BuildRequest(val files: Map<String, String>)
